@@ -1,0 +1,23 @@
+                           input size                time
+program
+
+iterative                   hasta 1e6           0.006 .. milesimas de seg
+                            1e7 < t < 1e8       0.024 .. centesimas de seg
+                            1e8 < t < 1e9       0.179 .. decimas de segundo
+                            1e9 < t < 1e10      1.607 .. mayor al segundo y medio
+                            1e10 = t            3.457 .. a partir de aca se
+mantiene en no mas de 3s 
+                            
+
+recursive                     10                     0.002
+                           100                       0.003
+                            200                      0.518
+                            mayor                   no termina
+
+
+tail recursive                10                     0.003 nunca pasa del segundo
+                             100                     0.003
+                            1000                     0.003
+                          10000                      0.003
+                          100000                     0.003
+                          1000000                    0.003

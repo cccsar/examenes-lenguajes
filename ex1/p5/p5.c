@@ -1,4 +1,5 @@
 #include<stdio.h>  
+#include<stdlib.h> 
 
 
 /* 
@@ -80,18 +81,10 @@ long long f_47 ( long long n ) {
 
 
 
-int main() { 
-	long long n;  
+int main(int argc, char **argv) { 
 
-	scanf("%lld",&n); 
+	iterative_f_47( atoi(argv[1]) ) ;
 
-	printf("Explicit recursion for f_47(%lld) :  %lld\n",n, f_47(n)); 
-	printf("Tail recursion for f_47(%lld): %lld\n",n , tail_f_47(n)); 
-	printf("Iterative implementation for f_47(%lld): %lld\n",n,iterative_f_47(n));  
-}
-
-int foo() { 
-	
-
-	return 0 ;
+	//printf("Tail recursion for f_47(%lld): %lld\n",n , tail_f_47(n)); 
+	//printf("Iterative implementation for f_47(%lld): %lld\n",n,iterative_f_47(n));  
 }
