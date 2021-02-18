@@ -5,6 +5,7 @@ import ReadAndEval
 import Constants
 
 import System.IO (hFlush, stdout, stderr, hPutStrLn) 
+import System.Exit(exitSuccess)
 
 
 main = do 
@@ -23,7 +24,7 @@ parse ss = do
   ("EVAL"   :"POST":xs) -> evalExpr False xs
   ("MOSTRAR":"PRE" :xs) -> showExpr True xs
   ("MOSTRAR":"POST":xs) -> showExpr False xs
-  ["SALIR"]             -> return ()  
+  ["SALIR"]             -> exitSuccess
   _                     -> hPutStrLn stderr "Error: Invalid option" >> main
 
  whipeOut 
