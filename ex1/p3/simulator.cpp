@@ -1,5 +1,6 @@
 #include "simulator.hpp"
 #include <math.h> 
+#include <iostream> 
 
 simulator::simulator( int mmax ) {  
 
@@ -93,8 +94,19 @@ int simulator :: insert ( string name, int request){
 
 
 void simulator :: display_memory() { 
+
+	printf("\nEstado de la memoria:\n"); 
+
 	for(auto el : mem) 
 		printf("%d",(int)el) ; 
+
+	printf("\n\n"); 
+
+	for(auto el : names)
+		cout<<"id: "<<el.first<<endl<<"\t* posicion de memoria: "<<el.second.first
+			<<" * espacio abarcado: "<<el.second.second
+			<<" * espacio ocupado: "<<best_fit_size( el.second.second )<<endl ;
+
 	printf("\n"); 
 }
 

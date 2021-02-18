@@ -52,7 +52,6 @@ public:
 	/* Shows the current memory layout */
 	void display_memory();
 
-	int best_fit_size (int el ); 
 
 private : 
 
@@ -67,6 +66,7 @@ private :
 	/* Returns best fit size ( upper bound for a power of 2 ) of a given amount of 
 	 * memory in request
 	 */
+	int best_fit_size (int el ); 
 
 	
 	/* Returns either the index for the next memory allocation to carry out, or -1 
