@@ -25,7 +25,7 @@ public:
 	/* Set of initial positions of each block with occupied memory.
 	 * It is used to avoid linear search while searching for free memory.
 	 */
-	set< int > bounds; 
+	std::set< int > bounds; 
 
 	/* Total size of memory */
 	int size; 

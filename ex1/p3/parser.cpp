@@ -1,12 +1,4 @@
-#include<vector> 
-#include<string> 
-
 #include "parser.hpp"
-
-#define RESERVAR "RESERVAR"
-#define LIBERAR "LIBERAR"
-#define MOSTRAR "MOSTRAR"
-#define SALIR "SALIR"
 
 using namespace std; 
 
@@ -97,3 +89,4 @@ bool parse_input(string &ss, simulator &sim) {
 
 	return true; 
 }
+

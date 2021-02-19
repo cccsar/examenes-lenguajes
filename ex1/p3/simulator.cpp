@@ -1,6 +1,7 @@
-#include "simulator.hpp"
 #include <math.h> 
 #include <iostream> 
+
+#include "simulator.hpp"
 
 simulator::simulator( int mmax ) {  
 
@@ -63,7 +64,7 @@ int simulator :: find_best_fit(int request) {
 	for (i=0; i<size; i+= step ) { 
 		auto it = bounds.upper_bound(i); 
 
-		printf("mem[%d]: %d | ub(%d): %d | %d\n",i,(int) mem[i],i,*it,request); 
+		//printf("mem[%d]: %d | ub(%d): %d | %d\n",i,(int) mem[i],i,*it,request); 
 
 		if ( mem[i] && (it == bounds.end() || *it > i + request - 1) && i + request - 1 < size )
 			return i ; 

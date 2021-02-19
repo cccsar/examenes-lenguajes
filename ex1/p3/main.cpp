@@ -1,9 +1,8 @@
 #include<stdio.h> 
 #include<iostream> 
 
-#include "simulator.cpp"
-#include "parser.cpp"
-
+#include "parser.hpp"
+#include "simulator.hpp"
 
 #define INTRO "Simulador de manejo de memoria"
 #define DIALOG "Que deseas hacer?: \n * RESERVAR <nombre> <cantidad>\n * LIBERAR <nombre>\n * MOSTRAR \n * SALIR\n"
@@ -30,6 +29,8 @@ void dbg(simulator &sim) {
 		printf("%d %d\n", el.second.first, el.second.second); 
 	}
 }
+
+
 
 int main(int argc, char **argv) { 
 	int mmax  ; 
