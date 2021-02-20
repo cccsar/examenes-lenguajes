@@ -17,22 +17,6 @@ long long factorial (int n) {
 	return res; 
 }
 
-// Anm x Bmp = Cnp
-//
-// A12 x B23 -> C13
-// A
-// 1 2
-//
-// B
-// 1 2 3 
-// 4 5 6
-//
-// C                 A[0][0] * B[0][1] + A[0][1] * B[1][1] = C[0][1]
-// | (1*1) + (2*4) | (1*2) + (2*5) | (1*3) + (2*6)
-//  ===
-// 9 12 15
-//
-
 // Matrix multiplication implementation
 void mat_mult( matrix &a, matrix &b ,matrix &c ) { 
 	

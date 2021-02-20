@@ -1,5 +1,6 @@
 #include<stdio.h>  
 #include<stdlib.h> 
+#include<time.h> 
 
 
 /* 
@@ -82,9 +83,14 @@ long long f_47 ( long long n ) {
 
 
 int main(int argc, char **argv) { 
+	clock_t start, end; 
 
-	iterative_f_47( atoi(argv[1]) ) ;
+	start = clock();
 
-	//printf("Tail recursion for f_47(%lld): %lld\n",n , tail_f_47(n)); 
-	//printf("Iterative implementation for f_47(%lld): %lld\n",n,iterative_f_47(n));  
+	tail_f_47( (long long ) atoll( argv[1] ) ); 
+
+	end = clock(); 
+
+	printf("%.10f\n",( double ) (end - start) / (double) CLOCKS_PER_SEC); 
+
 }
