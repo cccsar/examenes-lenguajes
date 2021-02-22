@@ -2,6 +2,7 @@
 #include<map> 
 #include<set> 
 #include<string> 
+#include<utility>
 
 using namespace std; 
 
@@ -25,7 +26,10 @@ public:
 	/* Set of initial positions of each block with occupied memory.
 	 * It is used to avoid linear search while searching for free memory.
 	 */
-	std::set< int > bounds; 
+	set< int > bounds; 
+
+	/* A map to keep track of free memory blocks */
+	map<int, int> free_mem; 
 
 	/* Total size of memory */
 	int size; 
@@ -68,11 +72,25 @@ private :
 	 */
 	int best_fit_size (int el ); 
 
-	
 	/* Returns either the index for the next memory allocation to carry out, or -1 
 	 * if not possible
 	 */	
 	int find_best_fit(int request); 
+
+
+	/* Returns the position of the buddy block for a given position and size, and 
+	 * a boolean that tells whether it is the left buddy for the given block 
+	 * (true) or the right one.
+	 */ 
+	pair<bool, int> buddy (int pos, int size); 
+
+	/* Procedure to create free blocks from a given position and size */ 
+	void create_blocks(int pos, int sz, bool tp); 
+
+	/* Procedure to merge free memory blocks after the deletion of an identifier
+	 * And subsequence freeing of memory 
+	 */
+	void merge_blocks(int pos, int size); 
 
 }; 
 
