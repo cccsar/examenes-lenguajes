@@ -5,7 +5,7 @@ module ReadAndEval (
  readPost,
  eval
 )
-  where
+ where
 
 import Types
 
@@ -17,8 +17,8 @@ import Data.Char (isDigit)
 
 evalPre, evalPost :: SomeOrd -> Maybe Int -- Perhaps use either to handle error types
 
-evalPre  ss = eval <$> readPre ss
-evalPost ss = eval <$> readPost ss
+evalPre  ss = readPre ss >>= eval 
+evalPost ss = readPost ss >>= eval 
 
 
 {- Transfroming a post-order or pre-order expression into an infix one. -} 
@@ -39,7 +39,7 @@ readPre = rpre [] . reverse
        _        -> Nothing
    | otherwise    = Nothing
   rpre [r] []     = Just r 
-  rpre _   _      = error "readPre: invalid input expression"
+  rpre _   _      = Nothing
 
 
 -- Receive a list of strings representing (possibly) a post order expression, and
@@ -52,18 +52,20 @@ readPost = rpos []
    | isOperator s = case xs of 
        (a:b:zs) -> rpos ( getExp (head s) b a : zs) ss
        _        -> Nothing
-   | otherwise    = undefined
+   | otherwise    = Nothing
   rpos [r] []     = Just r 
-  rpos _   _      = error "readPost: invalid input expression"
+  rpos _   _      = Nothing
   
 
 -- Reduce an expression to its arithmetical result.
-eval :: Expression -> Int
-eval (Sum a b)          = eval a + eval b
-eval (Substraction a b) = eval a - eval b
-eval (Product a b)      = eval a * eval b
-eval (Division a b)     = eval a `div` eval b
-eval (Cons a)           = a 
+eval :: Expression -> Maybe Int
+eval (Sum a b)          = fmap (+) (eval a) <*> (eval b)
+eval (Substraction a b) = fmap (-) (eval a) <*> (eval b)
+eval (Product a b)      = fmap (*) (eval a) <*> (eval b) 
+eval (Division a b)     
+  | b == (Cons 0)       = Nothing -- Consider division by zero
+  | otherwise           = fmap div (eval a) <*> (eval b) 
+eval (Cons a)           = Just a 
 
 
 {- Helper Functions -}
