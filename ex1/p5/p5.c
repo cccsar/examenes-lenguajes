@@ -80,17 +80,6 @@ long long f_47 ( long long n ) {
 	return f_47 (n-7) + f_47 (n-14) + f_47 (n-21) + f_47 (n-28) ; 
 }
 
-
-
-int main(int argc, char **argv) { 
-	clock_t start, end; 
-
-	start = clock();
-
-	tail_f_47( (long long ) atoll( argv[1] ) ); 
-
-	end = clock(); 
-
-	printf("%.10f\n",( double ) (end - start) / (double) CLOCKS_PER_SEC); 
+int main() { 
 
 }

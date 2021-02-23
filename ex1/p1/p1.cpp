@@ -1,11 +1,10 @@
 #include<stdio.h> 
 #include<vector> 
 
-#define MAXS 10000 // 1e4*8 
-
 using namespace std ;
 
 typedef vector< vector<int> > matrix; 
+
 
 // Factorial implementation
 long long factorial (int n) { 
@@ -16,6 +15,7 @@ long long factorial (int n) {
 
 	return res; 
 }
+
 
 // Matrix multiplication implementation
 void mat_mult( matrix &a, matrix &b ,matrix &c ) { 
@@ -29,6 +29,7 @@ void mat_mult( matrix &a, matrix &b ,matrix &c ) {
 	
 }
 
+
 void print_matrix(matrix &a) {  // second dimension deduced
 
 	for(auto row : a) {
@@ -38,6 +39,7 @@ void print_matrix(matrix &a) {  // second dimension deduced
 	}
 
 }
+
 
 void read_matrix(matrix &a) { 
 
@@ -56,6 +58,7 @@ void handle_size(matrix &a, int n, int m) {
 	for(int i=0 ;i<n; i++) 
 		a[i].resize(m); 
 }
+
 
 // test matrix product
 void test_matrix_product() { 

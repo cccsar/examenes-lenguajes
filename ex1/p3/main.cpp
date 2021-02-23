@@ -8,30 +8,6 @@
 #define DIALOG "Que deseas hacer?: \n * RESERVAR <nombre> <cantidad>\n * LIBERAR <nombre>\n * MOSTRAR \n * SALIR\n"
 
 
-using namespace std; 
-
-
-void dbg(simulator &sim) { 
-
-	printf("set of bounds:\n"); 
-	for(auto el : sim.bounds)
-		printf("%d ",el); 
-	printf("\n"); 
-
-	printf("memory vector:\n"); 
-	for(auto el : sim.mem)
-		printf("%d",(int)el); 
-	printf("\n"); 
-
-	printf("map of names:\n"); 
-	for(auto el : sim.names){ 
-		cout<<el.first<<" "; 
-		printf("%d %d\n", el.second.first, el.second.second); 
-	}
-}
-
-
-
 int main(int argc, char **argv) { 
 	int mmax  ; 
 	bool chk; 

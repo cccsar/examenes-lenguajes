@@ -10,6 +10,7 @@ bool isInt (const string & ss) {
 	return chk ;
 }
 
+
 void words(vector<string> &wd, string &ss) {  
 	int  curr; 
 
@@ -32,6 +33,7 @@ void words(vector<string> &wd, string &ss) {
 		}
 	}
 } 
+
 
 bool parse_input(string &ss, simulator &sim) { 
 	vector<string> wd; 
