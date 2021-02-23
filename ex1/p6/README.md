@@ -3,6 +3,7 @@
 Para casos de prueba usar:
 
 `cabal clean`
+
 `cabal configure --enable-tests --enable-coverage`
 
 Luego correr: 
