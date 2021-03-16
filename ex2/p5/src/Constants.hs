@@ -2,9 +2,11 @@ module Constants (
  prompt, 
  intro, 
  frequent,
- invalidInput, 
- invalidTypeDescription,
- invalidExpression
+ invalidInputWarning, 
+ invalidTypeDescriptionWarning,
+ parensExpressionWarning,
+ invalidIdentifierWarning,
+ invalidExpressionWarning
 )
  where
 
@@ -19,8 +21,15 @@ frequent = "Que deseas hacer ahora?\n\tDEF <nombre> <tipo>\tdefino un nombre <no
            "\n\tMOSTRAR <tipo>\tMuestra el diccionario de tipos actual" ++ 
            "\n\tSALIR"
 
-invalidInput = "La opcion que ingreso no es una opcion valida."
 
-invalidTypeDescription = "La descripcion dada para el tipo no es correcta." 
+{- Warnings -} 
 
-invalidExpression = "La expression dada no esta bien parentizada"
+invalidInputWarning = "La opcion que ingreso no es una opcion valida."
+
+invalidTypeDescriptionWarning = "La descripcion dada para el tipo no es correcta." 
+
+parensExpressionWarning = "La expression dada no esta bien parentizada"
+
+invalidIdentifierWarning = "La expresion dada contiene nombres que no han sido guardados en memoria"
+
+invalidExpressionWarning = "La expresion dada es invalida" 

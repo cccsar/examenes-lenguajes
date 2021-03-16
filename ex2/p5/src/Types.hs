@@ -9,12 +9,13 @@ data Type = Var VarName
 
 data NestedList a = List [NestedList a] | Elem a deriving Eq
 
+
 type VarName = String
 type ConstName = String
 
 type Atom = String
 type Expression = NestedList Atom -- They'll be used for unification
-type Memory = M.Map Atom [NestedList Type]
+type Memory = M.Map Atom (NestedList Type) 
 
 
 {- Instances -} 

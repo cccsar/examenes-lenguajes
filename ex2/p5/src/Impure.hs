@@ -5,9 +5,10 @@ import Impl
 import Types
 import Unification
 
-import qualified Data.Map as M (empty, insert, toList) 
+import qualified Data.Map as M (empty, insert, toList, lookup) 
 import System.IO (stdout,hFlush,stderr,hPutStrLn, Handle, hPutStr) 
 import Text.Read (readMaybe) 
+import Data.Maybe (isJust, fromJust) 
 
 
 {- Module to separate auxiliar IO from Main IO -} 
@@ -15,18 +16,36 @@ import Text.Read (readMaybe)
 -- Reads a definition string and if valid updates memory state
 defineType :: Memory -> Atom -> String -> IO Memory
 defineType mem name tipo = case readMaybe tipo of 
-   (Just t) -> return (M.insert name (typeToList t) mem)
+   (Just t) -> do 
+               putStrLn ("\tSe definió \'"++name++"\' con tipo: "++tipo)
+               return (M.insert name (typeToList' t) mem)
    Nothing  -> do 
-                warning stderr invalidTypeDescription 
+                warning stderr invalidTypeDescriptionWarning
                 return mem
 
 
 -- Reads an Expression and if valid, lookup names on it within the memory dictionary
 -- and unify on the go.
-giveExprType :: Memory -> String -> IO () 
+giveExprType :: Memory -> String -> IO Memory
 giveExprType memory expression 
-  | wellParens expression = undefined
-  | otherwise             = warning stderr invalidExpression
+  | wellParens expression = do
+       let expressionNL         = expressionList expression  :: NestedList String
+           maybeExpressionTypes = mapNestedList (flip M.lookup memory)  expressionNL 
+           checkExpression      = foldr (\b acc -> isJust b && acc) True maybeExpressionTypes
+                                  
+       if checkExpression then do
+          let expressionTypes = extendNestedList (fromJust . flip M.lookup memory) expressionNL 
+              typeOfExprs     = callUnifier expressionTypes
+               
+
+          case typeOfExprs of
+             (Just exp) -> putStrLn ('\t':show exp)
+             _          -> warning stderr invalidExpressionWarning 
+
+           -- Debug
+          return memory
+       else warning stderr invalidIdentifierWarning >> return memory
+  | otherwise             = warning stderr parensExpressionWarning >> return memory
 
 
 
@@ -35,11 +54,11 @@ giveExprType memory expression
 -- Requests input using prompt string.
 requestInfo :: Handle -> String -> IO String
 requestInfo handle message = do 
-                   hPutStr handle (prompt ++ " " ++ message ++ ": ") 
+                   hPutStr handle (prompt ++ " " ++ message ++ " ") 
                    hFlush stdout
                    getLine
                    
 
 -- Warns/tells the user messages using prompt and the appropriate file descriptor.
 warning :: Handle -> String -> IO () 
-warning handle message = hPutStr handle (prompt ++ " " ++  message) 
+warning handle message = hPutStrLn handle ('\t' : message) 

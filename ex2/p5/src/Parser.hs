@@ -52,12 +52,12 @@ word, konstLiteral, varLiteral, nameLiteral :: ReadP String
 word = munch wordChecker
 
 konstLiteral = do 
-                first  <- lower
+                first  <- upper
                 remain <- word
                 return (first : remain) 
 
 varLiteral   = do 
-                first  <- upper
+                first  <- lower
                 remain <- word
                 return (first : remain) 
 
