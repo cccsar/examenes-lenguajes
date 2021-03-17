@@ -12,10 +12,10 @@ instance Show a => Show (NestedList a) where
 -- show (List xs) = "[ " ++ (concat . intersperse " , " . map show $ xs) ++ " ]"
  show (Elem a) = show a 
  show (List xs) = " ( " ++ (concat . intersperse " -> " . map show $ xs) ++ " ) "
-   where 
-     prettyList :: Show a => NestedList a -> String
-     prettyList (Elem a)  = show a 
-     prettyList (List xs) =  " ( " ++ (concat . intersperse " -> " . map show $ xs) ++ " ) "
+--   where 
+--     prettyList :: Show a => NestedList a -> String
+--     prettyList (Elem a)  = show a 
+--     prettyList (List xs) =  " ( " ++ (concat . intersperse " -> " . map show $ xs) ++ " ) "
 
 instance Foldable NestedList where
   foldr foo base (List (x:xs)) =  foldr foo ( foldr foo base x ) (List xs)   
@@ -73,18 +73,18 @@ typeToList (Foo l r) = case l of
 expressionList :: String -> Expression
 expressionList expression
   | length toWork == 1 = List $ head toWork
-  | otherwise          = List $ arrange [List (head toWork)] (tail toWork) parens
+  | otherwise          = arrange [List (head toWork)] (tail toWork) parens
  where
   isParen e = e == ')' || e == '(' 
   parens    = filter isParen expression
   toWork    = map (map Elem) . map words $ splitWhen isParen expression :: [[NestedList String]]
 
-  -- arrange :: [NestedList String] -> [[NestedList String]] -> String -> NestedList String
+  arrange :: [NestedList String] -> [[NestedList String]] -> String -> NestedList String
   arrange outStack (top:inStack) (thisParen:other) 
     | thisParen == '(' = arrange (List top:outStack) inStack other
-    | thisParen == ')' = let (x : List y  : xs) = outStack 
+    | otherwise        = let (x : List y  : xs) = outStack 
                          in arrange ( List (y ++ [x] ++ top ) : xs ) inStack other 
-  arrange outStack _             []                = outStack
+  arrange outStack _             []                = head outStack
 
 
 -- Check a string's inner parentheses form a well parenthisation.

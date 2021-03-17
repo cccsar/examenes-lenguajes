@@ -37,7 +37,10 @@ giveExprType memory expression
           let expressionTypes = extendNestedList (fromJust . flip M.lookup memory) expressionNL 
               typeOfExprs     = callUnifier expressionTypes
                
+          putStrLn (show expressionNL) 
+          putStrLn (show expressionTypes) 
 
+          return memory
           case typeOfExprs of
              (Just exp) -> putStrLn ('\t':show exp)
              _          -> warning stderr invalidExpressionWarning 

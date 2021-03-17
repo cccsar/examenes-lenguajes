@@ -12,7 +12,7 @@ type Substitution = [(Type, NestedList Type)]
 -- then call unifier function.
 callUnifier :: NestedList Type -> Maybe (NestedList Type)
 callUnifier inputExpression@(List xs) 
-  | sz > 1    = checkHead inputExpression
+  | sz > 1    = matchArguments (head xs) (tail xs) 
   | sz == 1   = Just (head xs)
   | otherwise = Nothing
   where sz = length xs
@@ -29,10 +29,10 @@ callUnifier inputExpression@(List xs)
 checkHead :: NestedList Type -> Maybe (NestedList Type)
 checkHead toCheck@(List (x:xs)) = case x of
   (List (y:ys))  
-    | not (null xs) -> matchArguments x (List xs) 
+    | not (null xs) -> matchArguments x xs 
     | otherwise     -> Just toCheck
   _                 -> Just toCheck
-checkHead _                     = error "checkHead: Unexpected condition\n\tCalled on Elem" 
+checkHead xs                     = Just xs --error "checkHead: Unexpected condition\n\tCalled on Elem" 
 
 
 {- 
@@ -46,25 +46,37 @@ checkHead _                     = error "checkHead: Unexpected condition\n\tCall
 
 
 -- Previous checking before starting matching types.
-matchArguments :: NestedList Type -> NestedList Type -> Maybe (NestedList Type)
-matchArguments a b = do 
+matchArguments :: NestedList Type -> [NestedList Type] -> Maybe (NestedList Type)
+matchArguments a (b:bs) = do 
                       xs <- checkHead a 
                       ys <- checkHead b
-                      runSpeculation xs ys
+                      --Just ys
+                      runSpeculation xs (List (ys:bs)) 
+matchArguments _ []    = error "matchArguments: Unexpected condition" 
 
 
 -- Match the types of a function formal parameters with it's arguments using
 -- speulation function across the top level of a nested list.
 runSpeculation :: NestedList Type -> NestedList Type -> Maybe (NestedList Type)
-runSpeculation (List (x:xs))   (List (y:ys)) = 
+runSpeculation (List (x:xs)) (List (y:ys)) = 
   do 
    spec <- speculation x y 
 
+--   case y of 
+--     (List e) -> error ("Puta lista de mierda "++show (List (x:xs)) ++ "    " ++ show (List (y:ys))) 
+--     _ -> do 
+
+   a <- checkHead (List xs)
+   b <- checkHead (List ys) 
+
    if null spec then 
-     runSpeculation (List xs) (List ys)
-     else  runSpeculation (applyAllSubs (List xs) spec) (List ys)
-runSpeculation remain@(List (x:xs)) (List []) =  Just remain
-runSpeculation _                    _         = error "runSpeculation: Unexpected condition"
+      do runSpeculation a b  
+      else  runSpeculation (applyAllSubs a spec) b 
+runSpeculation remain (List [])            = case remain of 
+                                               (List [])     -> error "Pilas"
+                                               (List [x])    -> Just x
+                                               (List (x:xs)) -> Just remain
+runSpeculation xd                    _     = error "runSpeculation: Unexpected condition"
 
 
 -- Search within an element within a nested list and if found, extend the nested
