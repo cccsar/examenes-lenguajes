@@ -1,18 +1,8 @@
-module Constants ( 
- prompt, 
- intro, 
- frequent,
- invalidInputWarning, 
- invalidTypeDescriptionWarning,
- parensExpressionWarning,
- invalidIdentifierWarning,
- invalidExpressionWarning
-)
- where
+module Constants where
 
 {- Constant String Messages -}
 
-prompt = "polyType>" 
+prompt = "polyType> " 
 
 intro = "PolyType\nSimulador de sistema de tipos" 
 

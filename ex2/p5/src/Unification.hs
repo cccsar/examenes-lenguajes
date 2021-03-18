@@ -1,10 +1,12 @@
 module Unification where
 
-import Impl
+import NestedList
 import Types
 
 import qualified Data.Map as M
 
+
+-- A typep for representing substitutions derived from unification
 type Substitution = [(Type, NestedList Type)]
 
 
@@ -32,17 +34,7 @@ checkHead toCheck@(List (x:xs)) = case x of
     | not (null xs) -> matchArguments x xs 
     | otherwise     -> Just toCheck
   _                 -> Just toCheck
-checkHead xs                     = Just xs --error "checkHead: Unexpected condition\n\tCalled on Elem" 
-
-
-{- 
- - Casos:
- - const   const    --> check match
- - const   typeVar  --> error
- - typeVar const    --> assign on left side (?)
- - typeVar typeVar  --> propapgate substitution (?)
- -}
-
+checkHead xs                     = Just xs 
 
 
 -- Previous checking before starting matching types.
@@ -61,10 +53,6 @@ runSpeculation :: NestedList Type -> NestedList Type -> Maybe (NestedList Type)
 runSpeculation (List (x:xs)) (List (y:ys)) = 
   do 
    spec <- speculation x y 
-
---   case y of 
---     (List e) -> error ("Puta lista de mierda "++show (List (x:xs)) ++ "    " ++ show (List (y:ys))) 
---     _ -> do 
 
    a <- checkHead (List xs)
    b <- checkHead (List ys) 
@@ -100,7 +88,7 @@ speculation (Elem (Const a)) (Elem (Const b))
   | otherwise = Nothing
 speculation (Elem (Const a)) _                = Nothing 
 speculation (Elem (Var a))   (Elem (Const b)) = Just [  (Var a, Elem (Const b)) ]
-speculation (Elem (Var a))   (Elem (Var b))   = error "Aqui" -- Just [ (Var a, Elem (Var b)) ] 
+speculation (Elem (Var a))   (Elem (Var b))   = error "speculation: Not handled case" 
 speculation (Elem (Var a))   (List xs)        = Just [ (Var a, List xs) ] 
-speculation (List xs)        (List ys)        = error "alla" -- Puyao
+speculation (List xs)        (List ys)        = error "speculation: Not handled case"
 speculation (List xs)        _                = Just []

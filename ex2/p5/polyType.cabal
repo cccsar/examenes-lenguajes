@@ -17,8 +17,9 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:     Constants,
-                       Impl,
-                       Impure
+                       NestedList,
+                       Instances,
+                       Impure,
                        Parser,
                        Types,
                        Unification

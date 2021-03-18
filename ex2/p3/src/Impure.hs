@@ -1,12 +1,19 @@
-module Impure where
+module Impure ( 
+ getAtomic, 
+ getStructOrUnion,
+ describeType,
+ requestInfo, 
+ warning
+) where
+
 
 import Computation
-import Constants
-import Input
+import Constants (prompt, invalidAtomDescription, invalidCompoundFormat, invalidName) 
 import Types
 
+import Data.Char (isDigit) 
 import Data.Maybe (fromJust)
-import System.IO
+import System.IO (stdout, stderr, hPutStrLn, hPutStr, hFlush, Handle) 
 import qualified Data.Map as M (insert, member, lookup)
 
 
@@ -18,7 +25,9 @@ getAtomic memory (name:size:offset:[])
   | pred       = let actSize = read size; actOffset = read offset
                  in return $ M.insert name (Atom actSize actOffset) memory
   | otherwise  = warning stderr invalidAtomDescription >> return memory
- where pred = isNumber size && isNumber offset && not (M.member name memory)  
+ where 
+   pred = isNumber size && isNumber offset && not (M.member name memory)  
+   isNumber = all isDigit
 getAtomic memory _  =  warning stderr invalidAtomDescription >> return memory
 
 
@@ -28,7 +37,7 @@ getStructOrUnion memory (name:types) guard
    | pred      = if guard then return $ M.insert name (Struct types) memory 
                                     else  return $ M.insert name (Union types) memory
    | otherwise = warning stderr invalidCompoundFormat >> return memory
-  where pred = checkNameSpace memory types && not (M.member name memory) 
+  where pred = checkNameSpace memory types && not (M.member name memory) && not (null types)
 getStructOrUnion memory _            _ = warning stderr invalidCompoundFormat >> return memory
 
 
@@ -36,34 +45,35 @@ getStructOrUnion memory _            _ = warning stderr invalidCompoundFormat >>
 -- and wasted space. This information is given for normal, packaged and reoredered
 -- storage types (in the case of a compound type) 
 describeType :: Memory -> Name -> IO ()
-describeType memory name = case M.lookup name memory of 
-    (Just aType) -> case aType of 
-        (Atom size alignment) -> typeDescription size 0 alignment Nothing 
-        (Struct names)        -> do 
-            let actualSize = actualStoredSize aType memory
-                -- totalSize = getSize aType Normal memory
-                alignment = getAlignment aType memory 
-                   
-            typeDescription (fromJust actualSize) 0 (fromJust alignment) (Just Normal) 
+describeType memory name = 
+ case M.lookup name memory of 
+   (Just aType) -> 
+     case aType of 
+       (Atom size alignment) -> typeDescription size (size, alignment, Nothing) 
+       _                     -> do 
+          let actualSize = fromJust $ actualStoredSize aType memory
+              stTypes    = [minBound..maxBound] :: [StorageType]
 
-        (Union names)         -> do
-            let actualSize = actualStoredSize aType memory
-            -- totalSize = getSize aType Normal memory
-                alignment = getAlignment aType memory 
-                   
-            typeDescription (fromJust actualSize) 0 (fromJust alignment) (Just Normal) 
-    _            -> warning stderr invalidName 
+              sizes      = [ fromJust $ getSize aType x memory | x <- stTypes ] 
+              alignments = [ fromJust $ getAlignment aType x memory | x <- stTypes ] 
+
+              wastes     = map (\sz -> sz - actualSize) sizes
+
+          mapM_ (typeDescription actualSize) (zip3 sizes alignments (map Just stTypes)) 
+
+   _            -> warning stderr invalidName 
 
 
-typeDescription :: Size -> Size -> Alignment -> Maybe StorageType -> IO () 
-typeDescription size waste alignment st = do 
+-- Displays a formated type description for a single type descriptor.
+typeDescription :: Size -> (Size , Alignment , Maybe StorageType) -> IO () 
+typeDescription realSize (occupied, alignment, st) = do 
       case st of 
-       (Just e) ->  putStrLn $ "Tipo de almacenamiento: " ++ show e
-       _        ->  putStrLn $ "Información relevante: "  
+       (Just e) ->  putStrLn $ "\tTipo de almacenamiento: " ++ show e
+       _        ->  putStrLn $ "\tInformación relevante: "  
 
-      putStrLn $ "\tEspacio total ocupado: " ++ show size
-      putStrLn $ "\tEspacio desperdiciado: " ++ show waste
-      putStrLn $ "\tAlineación: " ++ show alignment
+      putStrLn $ "\t\tEspacio total ocupado: " ++ show occupied
+      putStrLn $ "\t\tEspacio desperdiciado: " ++ show (occupied - realSize) 
+      putStrLn $ "\t\tAlineación: " ++ show alignment
 
 
 -- Given a list of names, make sure they have already been defined
@@ -75,12 +85,11 @@ checkNameSpace memory names = foldr (\name acc -> M.member name memory && acc) T
 {- Helpers for text layout -} 
 
 -- Requests input using prompt string.
-requestInfo :: Handle -> String -> IO String
-requestInfo handle message = do 
-                   hPutStr handle (prompt ++ " " ++ message ++ " ") 
+requestInfo :: Handle -> IO String
+requestInfo handle = do 
+                   hPutStr handle prompt
                    hFlush stdout
                    getLine
-                   
 
 
 -- Warns/tells the user messages using prompt and the appropriate file descriptor.

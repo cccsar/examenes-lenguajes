@@ -18,7 +18,6 @@ cabal-version:       >=1.10
 library
   exposed-modules:     Computation,
                        Constants,
-                       Input,
                        Impure, 
                        Types
   -- other-modules:

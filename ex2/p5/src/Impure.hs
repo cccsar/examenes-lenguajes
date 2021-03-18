@@ -1,7 +1,8 @@
 module Impure where
 
 import Constants
-import Impl
+import Instances
+import NestedList
 import Types
 import Unification
 
@@ -18,7 +19,7 @@ defineType :: Memory -> Atom -> String -> IO Memory
 defineType mem name tipo = case readMaybe tipo of 
    (Just t) -> do 
                putStrLn ("\tSe definió \'"++name++"\' con tipo: "++tipo)
-               return (M.insert name (typeToList' t) mem)
+               return (M.insert name (typeToList t) mem)
    Nothing  -> do 
                 warning stderr invalidTypeDescriptionWarning
                 return mem
@@ -37,10 +38,6 @@ giveExprType memory expression
           let expressionTypes = extendNestedList (fromJust . flip M.lookup memory) expressionNL 
               typeOfExprs     = callUnifier expressionTypes
                
-          putStrLn (show expressionNL) 
-          putStrLn (show expressionTypes) 
-
-          return memory
           case typeOfExprs of
              (Just exp) -> putStrLn ('\t':show exp)
              _          -> warning stderr invalidExpressionWarning 
@@ -57,7 +54,7 @@ giveExprType memory expression
 -- Requests input using prompt string.
 requestInfo :: Handle -> String -> IO String
 requestInfo handle message = do 
-                   hPutStr handle (prompt ++ " " ++ message ++ " ") 
+                   hPutStr handle prompt  
                    hFlush stdout
                    getLine
                    

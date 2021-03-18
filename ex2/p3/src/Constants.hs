@@ -1,14 +1,6 @@
-module Constants (
- prompt, 
- intro, 
- frequent, 
- invalidOption,
- invalidAtomDescription,
- invalidName,
- invalidCompoundFormat
-) where
+module Constants where
 
-
+{- Regular messages -} 
 
 prompt = "typo> " 
 

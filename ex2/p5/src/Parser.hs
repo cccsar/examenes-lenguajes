@@ -1,8 +1,4 @@
-module Parser (
- functionApp, 
- displayResults,
- runParser
-) where
+module Parser ( functionApp ) where
 
 import Types
 
@@ -16,9 +12,10 @@ import Text.Read (readMaybe, readEither) -- remains to be used
 -- A way to propperly read Type's using a read instance
 instance Read Type where
   readsPrec _ = readP_to_S functionApp
+
  
 {-
- - CFG for a valid type annotated expression
+ - Context Free Grammar for a valid type annotated expression
  -
  - functionApp :: Name ' -> ' functionApp | Pt ' -> ' functionApp | Name [ | Pt ] ??
  - Pt    :: '(' functionApp ' )' 
@@ -107,45 +104,3 @@ closing = skipSpaces *> char ')'
 
 arrow :: ReadP String
 arrow = string "->"
-
-
-{- Ojo # DISPOSABLE FROM HERE-} 
-
--- A parser for optional whitespace
-ws :: ReadP ()
-ws = do many blank  
-        return ()
-
-blank :: ReadP Char
-blank = satisfy isSpace
-
-
-{- Running tests -} 
-
-runParser :: String -> ReadP a -> (a,String) 
-runParser input parser = case readP_to_S parser input of
-  (x:xs) -> x
-  _      -> error "error while parsing"
-
-tc = "a->b"
-tc1 = "a ->b"
-tc2 = "a -> b" 
-tc3 = "a  ->  b"
-tc4 = "A->b"
-tc5 = "a->B"
-tc6 = "A->B"
-tc7 = "Hola -> Como"
-tc8 = "a -> ( a -> b ) -> c " 
-tc9 = "(a -> b->c) -> (a ->b) ->a->c"
-tc10 = " ( a -> b -> c) -> d -> e " 
-fumado = "(a -> (a -> b -> c) -> c) -> a -> b " 
-
-testList :: [String] 
-testList = [tc,tc1,tc2,tc3,tc4,tc5,tc6,tc7, tc8, tc9, fumado]
-
-runTests :: ReadP a -> [(a,String)] 
-runTests p = map (flip runParser p) testList
-
-displayResults :: IO () 
-displayResults = do 
- mapM_ putStrLn (zipWith (++) (map ("String "++) testList) (map (\a -> "\tParsed to: " ++ show a) (runTests functionApp) ) )

@@ -1,11 +1,11 @@
 module Main where
 
-import Constants
+import Constants (intro, frequent, prompt, invalidOption) 
 import Impure
 import Types
 
 import qualified Data.Map as M
-import System.IO ( stderr, stdout) 
+import System.IO (stderr, stdout) 
 import System.Exit (exitSuccess)
 
 
@@ -18,7 +18,7 @@ main = do
 
 repl :: Memory -> IO ()
 repl memory = do 
-       option <- requestInfo stdout "" 
+       option <- requestInfo stdout 
 
        case words option of 
          ("ATOMICO":xs)   -> getAtomic memory xs >>= repl

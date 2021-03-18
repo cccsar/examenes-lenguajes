@@ -1,27 +1,14 @@
-module Impl where
+module NestedList where
 
 import Types
 import Parser
 
-import Data.List (intersperse, concat)  -- only for visibility
 import Data.List.Split (splitWhen) 
 
-{- # Onlly for debugging -} 
-instance Show a => Show (NestedList a) where
--- show (Elem a)    = show a 
--- show (List xs) = "[ " ++ (concat . intersperse " , " . map show $ xs) ++ " ]"
- show (Elem a) = show a 
- show (List xs) = " ( " ++ (concat . intersperse " -> " . map show $ xs) ++ " ) "
---   where 
---     prettyList :: Show a => NestedList a -> String
---     prettyList (Elem a)  = show a 
---     prettyList (List xs) =  " ( " ++ (concat . intersperse " -> " . map show $ xs) ++ " ) "
 
-instance Foldable NestedList where
-  foldr foo base (List (x:xs)) =  foldr foo ( foldr foo base x ) (List xs)   
-  foldr foo base (List [])     = base
-  foldr foo base (Elem e)      = foo e base
 
+
+{- Related Nested List functions -} 
 
 -- Similar to list concatenation, but with nested Lists
 concatNestedList :: NestedList a -> NestedList a -> NestedList a
@@ -46,26 +33,13 @@ extendNestedList f (List xs) = List (map (extendNestedList f) xs)
 
 -- Given a Type, transform it into an appropriate representation for unification
 -- using NestedList type.
-typeToList' :: Type -> NestedList Type
-typeToList' (Var a)   = Elem (Var a) 
-typeToList' (Const a) = Elem (Const a) 
-typeToList' (Foo l r) = case l of
-   (Foo _ _) -> List [ typeToList' l ] `concatNestedList` typeToList' r 
-   _         -> typeToList' l `concatNestedList` typeToList' r
-
-
--- Given a Type, transform it into an appropriate representation for unification
--- using NestedList type.
-typeToList :: Type -> [NestedList Type]
-typeToList (Var a)   = [Elem (Var a) ]
-typeToList (Const a) = [Elem (Const a) ]
+typeToList :: Type -> NestedList Type
+typeToList (Var a)   = Elem (Var a) 
+typeToList (Const a) = Elem (Const a) 
 typeToList (Foo l r) = case l of
-   (Foo _ _) -> case r of
-                 (Foo _ _) -> [ List (typeToList l) ] ++ typeToList r
-                 xd        -> [ List (typeToList l), Elem xd ]
-   xd        -> case r of 
-                 (Foo _ _) -> [ Elem xd ] ++ typeToList r 
-                 xs        -> [ Elem xd, Elem xs ] 
+   (Foo _ _) -> List [ typeToList l ] `concatNestedList` typeToList r 
+   _         -> typeToList l `concatNestedList` typeToList r
+
 
 
 -- Assuming well parenthesized (if so) String expression, transform a string

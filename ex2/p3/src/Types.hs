@@ -7,7 +7,7 @@ data TypeDescriptor = Atom Size Alignment
                     | Union [String]
                    deriving (Eq,Show)
 
-data StorageType = Normal | Packaged | Reordered deriving (Show, Enum) 
+data StorageType = Normal | Packaged | Reordered deriving (Show, Enum, Bounded) 
 
 type Size = Int
 type Alignment = Int
