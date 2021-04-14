@@ -1,7 +1,13 @@
+import scala.util.control.Breaks._
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
+
 import scala.io.StdIn
 import java.util.Scanner;
 
-object Prueba { 
+object Matrix_sum { 
   def main(args: Array[String]): Unit = { 
 
     val scanner = new Scanner(System.in) 
@@ -15,13 +21,35 @@ object Prueba {
     var b = Array.ofDim[Int](rows,cols)
     var c = Array.ofDim[Int](rows,cols) // se inicializa en 0
 
+    // storring the result of the futures
+    var res = new Array[Future[Unit]](rows)
+    var guard = true
+
     readMatrix(a)
     readMatrix(b)
     initializeMat(c)
 
-    sumRows(a,b,c,1)
+    // Spawn futures for each row of the matrix
+    for (i<-0 to rows-1) { 
+      res(i) = arrSum(a(i),b(i),c(i))
+    }
 
-    dbgMatrix(c)
+    // check that none of the futures failed
+    for (i<-0 to rows-1) { 
+      res(i) onFailure { 
+        case e => println(s"Exception ${e.getMessage}") 
+        guard = false
+        break
+      }
+    }
+
+    // on success, print matrix
+    if (guard) { 
+      dbgMatrix(c)
+    }
+    else { 
+      println (s"Error while coputing matrix")
+    }
   }
 
   def readMatrix (mat : Array[ Array[Int]] ) = { 
@@ -43,13 +71,10 @@ object Prueba {
     }
   }
 
-  // this one has to be parallel
-  def sumRows ( a : Array[ Array[Int] ], b : Array[ Array[Int] ] , res : Array[ Array[Int] ] , r : Int ) = { 
-    assert( a.length == b.length && a(0).length == b(0).length ) // require matrix dimentions to match
-
-
-    for (i <- 0 to a(0).length-1) {
-      res(r)(i) = a(r)(i) + b(r)(i)
+  // Future for the sum of an array. Used to sum rows of a matrix concurrently
+  def arrSum ( a : Array[ Int ], b : Array[ Int ] , res : Array[ Int] ) : Future[Unit] = Future { 
+    for (i <- 0 to a.length-1) {
+      res(i) = a(i) + b(i)
     }
   }
 
@@ -61,5 +86,4 @@ object Prueba {
     }
   }
 
-        
 }
