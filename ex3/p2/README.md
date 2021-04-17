@@ -16,8 +16,10 @@ Por ejemplo
 
 ```
 scalac matrix_sum.scala && scala Matrix_sum
-1 2
+2 2
 4 2
 6 9
+7 3
+3 3
 ```
 
