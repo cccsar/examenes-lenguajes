@@ -2,19 +2,20 @@
 
 Para probar el IO simplemente hacer
 
-`` cabal clean  ``
-
-`` cabal build ``
-
-`` cabal test ``
-
+```
+cabal clean  
+cabal build 
+cabal test 
+```
 
 Para las pruebas de cobertura hacer:
 
-`` cabal clean ``
+```
+cabal clean
 
-`` cabal configure --enable-tests --enable-coverage ``
+cabal configure --enable-tests --enable-coverage 
 
-``cabal test ``
+cabal test 
+```
 
 Luego, revisar los html bajo: **./dist/hpc/vanilla/html/**

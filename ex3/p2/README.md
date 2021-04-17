@@ -15,7 +15,8 @@ MatDescription
 Por ejemplo
 
 ```
-scalac matrix_sum.scala && scala Matrix_sum
+scalac matrix_sum.scala 
+scala Matrix_sum
 2 2
 4 2
 6 9
